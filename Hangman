@@ -1,0 +1,94 @@
+import random
+class Game:
+    def __init__(self):
+        self.players = None
+    def _play(self): 
+        print("Game starting now!")
+
+class Hangman(Game):
+
+    difficulty_lvl = {'beginner': 8,
+                      'intermediate': 5,
+                      'advanced': 3}
+
+  
+
+    def __init__(self,difficulty):
+        super().__init__()
+        self.difficulty = difficulty
+        self.max_mistakes = self.difficulty_lvl[difficulty]
+        self.mistakes = 0
+        self.word = None
+        self.guessed_letters = set()
+
+    def choose_difficulty(self):
+         print("Choose level:")
+         for key, value in self.difficulty_lvl.items():
+            print(f"{key} = {value} possible mistakes")
+         self.difficulty = input("Your choice:")
+         if self.difficulty in self.difficulty_lvl:
+            self.max_mistakes = self.difficulty_lvl[self.difficulty]
+         else:
+            print("This kind of level doesnt exists")
+            self.choose_difficulty()
+    
+    def choose_players(self):
+        print("Choose number of players: ")
+        self.players = input("Number of players: ")
+    
+            
+    def _play(self):
+
+        super()._play()
+        self.choose_players()
+        self.choose_difficulty()
+        if self.players == '1':
+            self.word = self.choose_word()
+        if self.players == '2':
+            self.word = input("Give a word you want to play with:")
+    
+        self.play_game()
+
+    def choose_word(self):
+        words = ["ambulance", "headphones", "table", "football"]
+        return random.choice(words)
+    
+    def play_game(self):
+        while self.mistakes < self.max_mistakes:
+            guess = input("Give a letter: ")
+            if guess in self.word:
+                print ("Letter is in the word")
+                self.guessed_letters.add(guess)
+            else:
+                print("Letter is not in the word")
+                self.mistakes += 1
+            if len(guess) !=1:
+                print("Your answer should be a single letter")
+                continue
+            if self.end():
+                if self.mistakes >= self.max_mistakes:
+                    print("You lose!")
+                if  set(self.word) <= self.guessed_letters:
+                    print("You Win!")
+                print("End of the game")
+                break
+            self.display()
+
+
+    def display(self):
+        for letter in self.word:
+            if letter in self.guessed_letters:
+                print(letter, end = "")
+            else:
+                print("_", end = "")
+        print()
+    
+    def end(self):
+        if self.mistakes >= self.max_mistakes:
+            return "You lost"
+        if  set(self.word) <= self.guessed_letters:
+            return " You won"
+
+if __name__ == "__main__":
+    game = Hangman(difficulty = 'beginner')
+    game._play()
